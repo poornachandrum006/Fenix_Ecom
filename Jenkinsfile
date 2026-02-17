@@ -19,7 +19,7 @@ pipeline {
         )
         string(
             name: 'BRANCH',
-            defaultValue: 'master',
+            defaultValue: 'main',
             description: 'Git branch to checkout'
         )
     }
@@ -35,11 +35,11 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo "🔄 Checking out branch: ${params.BRANCH}"
-                checkout scmGit(
+                checkout([
+                    $class: 'GitSCM',
                     branches: [[name: "*/${params.BRANCH}"]],
-                    extensions: [],
-                    userRemoteConfigs: [[url: "${env.GIT_URL}"]]
-                )
+                    userRemoteConfigs: [[url: 'https://github.com/poornachandrum006/Fenix_Ecom.git']]
+                ])
             }
         }
         
