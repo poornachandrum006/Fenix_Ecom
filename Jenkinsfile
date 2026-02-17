@@ -30,6 +30,7 @@ pipeline {
     
     environment {
         NODE_VERSION = '18'
+        CI = 'true' // Ensure CI environment variable is set
         ALLURE_RESULTS_PATH = 'allure-results'
         ALLURE_REPORT_PATH = 'allure-report'
         // Use Jenkins workspace for browser caching instead of home directory

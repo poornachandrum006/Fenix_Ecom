@@ -14,8 +14,11 @@ module.exports = defineConfig({
     headless: process.env.CI ? true : false, // Always headless in CI
   },
 
-  reporter: [
-    ['list'],
+  reporter: process.env.CI ? [
+    ['dot'], // Simple dot reporter for CI - no ANSI escape sequences
+    ['allure-playwright', { outputFolder: 'allure-results', detail: true }],
+  ] : [
+    ['list'], // Fancy list reporter for local development
     ['allure-playwright', { outputFolder: 'allure-results', detail: true }],
   ],
 
