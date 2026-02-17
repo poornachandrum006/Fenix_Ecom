@@ -9,17 +9,43 @@ module.exports = defineConfig({
     navigationTimeout: 30 * 1000,
     actionTimeout: 15 * 1000,
     trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
+    screenshot: 'on', // Capture screenshots for ALL tests (pass and fail)
     video: 'retain-on-failure',
     headless: process.env.CI ? true : false, // Always headless in CI
   },
 
   reporter: process.env.CI ? [
     ['dot'], // Simple dot reporter for CI - no ANSI escape sequences
-    ['allure-playwright', { outputFolder: 'allure-results', detail: true }],
+    ['allure-playwright', { 
+      outputFolder: 'allure-results', 
+      detail: true,
+      includeTestSteps: true,
+      attachments: {
+        screenshot: {
+          mode: 'always',
+          fullPage: true
+        },
+        video: {
+          mode: 'retain-on-failure'
+        }
+      }
+    }],
   ] : [
     ['list'], // Fancy list reporter for local development
-    ['allure-playwright', { outputFolder: 'allure-results', detail: true }],
+    ['allure-playwright', { 
+      outputFolder: 'allure-results', 
+      detail: true,
+      includeTestSteps: true,
+      attachments: {
+        screenshot: {
+          mode: 'always',
+          fullPage: true
+        },
+        video: {
+          mode: 'retain-on-failure'
+        }
+      }
+    }],
   ],
 
   projects: [
