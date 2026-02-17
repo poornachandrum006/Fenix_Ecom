@@ -167,7 +167,30 @@ pipeline {
         stage('Generate Allure Report') {
             steps {
                 echo '📈 Generating Allure report...'
-                sh 'npm run report:allure || echo "⚠️ Allure report generation failed but continuing..."'
+                
+                script {
+                    try {
+                        // Generate Allure report
+                        sh 'npm run report:allure'
+                        echo '✅ Allure report generated successfully'
+                    } catch (Exception e) {
+                        echo "⚠️ Allure report generation failed: ${e.getMessage()}"
+                        
+                        // Try alternative method if npm script fails
+                        try {
+                            sh 'npx allure generate allure-results --clean -o allure-report'
+                            echo '✅ Allure report generated using npx'
+                        } catch (Exception e2) {
+                            echo "❌ Alternative Allure generation also failed: ${e2.getMessage()}"
+                            
+                            // Create basic index file if all else fails
+                            sh '''
+                                mkdir -p allure-report
+                                echo "<html><body><h1>Allure Report Generation Failed</h1><p>Check console logs for details</p></body></html>" > allure-report/index.html
+                            '''
+                        }
+                    }
+                }
             }
         }
     }
@@ -179,19 +202,35 @@ pipeline {
             // Archive test artifacts
             archiveArtifacts artifacts: 'test-results/**/*', allowEmptyArchive: true
             archiveArtifacts artifacts: 'allure-results/**/*', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'allure-report/**/*', allowEmptyArchive: true
             
-            // Publish Allure HTML report
+            // Publish Allure Report (Method 1 - Using Allure Plugin)
             script {
-                if (fileExists('allure-report')) {
-                    publishHTML([
-                        allowMissing: false,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: 'allure-report',
-                        reportFiles: 'index.html',
-                        reportName: 'Allure Test Report',
-                        reportTitles: 'Fenix Catalog Test Results'
+                try {
+                    allure([
+                        includeProperties: false,
+                        jdk: '',
+                        properties: [],
+                        reportBuildPolicy: 'ALWAYS',
+                        results: [[path: 'allure-results']]
                     ])
+                    echo '✅ Allure plugin report published'
+                } catch (Exception e) {
+                    echo "⚠️ Allure plugin not available, using HTML publisher: ${e.getMessage()}"
+                    
+                    // Fallback: Publish HTML report (Method 2)
+                    if (fileExists('allure-report')) {
+                        publishHTML([
+                            allowMissing: false,
+                            alwaysLinkToLastBuild: true,
+                            keepAll: true,
+                            reportDir: 'allure-report',
+                            reportFiles: 'index.html',
+                            reportName: 'Allure Test Report',
+                            reportTitles: 'Fenix Catalog Test Results'
+                        ])
+                        echo '✅ HTML report published'
+                    }
                 }
             }
             
@@ -202,11 +241,24 @@ pipeline {
                     returnStdout: true
                 ).trim()
                 
+                def passedTests = sh(
+                    script: "find allure-results -name '*-result.json' 2>/dev/null -exec grep -l '\"status\":\"passed\"' {} \\; | wc -l || echo '0'",
+                    returnStdout: true
+                ).trim()
+                
+                def failedTests = sh(
+                    script: "find allure-results -name '*-result.json' 2>/dev/null -exec grep -l '\"status\":\"failed\"' {} \\; | wc -l || echo '0'",
+                    returnStdout: true
+                ).trim()
+                
                 echo "📊 Test Summary:"
                 echo "   • Test Suite: ${params.TEST_SUITE}"
                 echo "   • Browser: ${params.BROWSER}"
                 echo "   • Branch: ${params.BRANCH}"
-                echo "   • Test Files: ${testFiles}"
+                echo "   • Total Tests: ${testFiles}"
+                echo "   • Passed: ${passedTests}"
+                echo "   • Failed: ${failedTests}"
+                echo "   • 📋 View detailed results in Allure Report"
             }
         }
         

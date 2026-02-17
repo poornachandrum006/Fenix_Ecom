@@ -9,8 +9,12 @@
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
     "test:smoke": "playwright test --grep @smoke",
+    "test:catalog": "playwright test tests/catalog/ --reporter=line,allure-playwright",
+    "test:catalog:firefox": "playwright test tests/catalog/ --project=firefox --reporter=line,allure-playwright",
+    "test:jenkins": "playwright test tests/catalog/ --workers=1 --retries=2 --reporter=line,allure-playwright",
     "report:allure": "allure generate allure-results --clean -o allure-report",
-    "report:open": "allure open allure-report"
+    "report:open": "allure open allure-report",
+    "report:serve": "allure serve allure-results"
   },
   "keywords": [],
   "author": "",
