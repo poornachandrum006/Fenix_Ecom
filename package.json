@@ -1,0 +1,23 @@
+{
+  "name": "justfun",
+  "version": "1.0.0",
+  "description": "Playwright JavaScript QA framework with POM and Allure reporting for wearhumans.com",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:smoke": "playwright test --grep @smoke",
+    "report:allure": "allure generate allure-results --clean -o allure-report",
+    "report:open": "allure open allure-report"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "allure-commandline": "^2.34.1",
+    "allure-playwright": "^3.4.1"
+  }
+}
