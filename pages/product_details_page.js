@@ -67,7 +67,7 @@ export class ProductDetailsPage {
   }
 
   get relatedProductsList() {
-    return this.page.locator('h2:has-text("You may also like") ~ list listitem');
+    return this.page.locator('.product-recommendations__inner ul.grid li');
   }
 
   // Product-specific methods

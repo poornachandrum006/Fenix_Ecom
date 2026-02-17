@@ -38,7 +38,11 @@ test.describe('Catalog - Product Details', () => {
     await expect(productDetailsPage.salePriceElement).toBeVisible();
     await expect(productDetailsPage.regularPriceElement).toBeVisible();
     
-    console.log('✓ Product pricing displayed (Sale: $250.00, Regular: $300.00)');
+    // Get actual prices from the page elements
+    const salePrice = await productDetailsPage.salePriceElement.textContent();
+    const regularPrice = await productDetailsPage.regularPriceElement.textContent();
+    
+    console.log(`✓ Product pricing displayed (Sale: ${salePrice?.trim()}, Regular: ${regularPrice?.trim()})`);
   });
 
   test('product page shows sale badge', async ({ page }) => {
