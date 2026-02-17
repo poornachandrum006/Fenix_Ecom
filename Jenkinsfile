@@ -1,6 +1,10 @@
 pipeline {
     agent any
     
+    tools {
+        nodejs '18.20.4' // Use global Node.js tool (configure in Jenkins Global Tool Configuration)
+    }
+    
     parameters {
         choice(
             name: 'TEST_SUITE',
@@ -28,7 +32,12 @@ pipeline {
         NODE_VERSION = '18'
         ALLURE_RESULTS_PATH = 'allure-results'
         ALLURE_REPORT_PATH = 'allure-report'
-        PLAYWRIGHT_BROWSERS_PATH = '0'
+        // Use Jenkins workspace for browser caching instead of home directory
+        PLAYWRIGHT_BROWSERS_PATH = "${env.WORKSPACE}/.playwright-browsers"
+        // Optimize npm cache for Jenkins
+        NPM_CONFIG_CACHE = "${env.WORKSPACE}/.npm-cache"
+        // Enable browser caching across builds
+        PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = 'false'
     }
     
     stages {
@@ -42,9 +51,14 @@ pipeline {
         stage('Environment Info') {
             steps {
                 echo '🔍 Environment Information:'
-                sh 'node --version || echo "Node.js not found"'
-                sh 'npm --version || echo "npm not found"'
+                sh 'node --version'
+                sh 'npm --version'
                 sh 'pwd && ls -la'
+                
+                // Display browser cache information
+                echo "Browser cache directory: ${env.PLAYWRIGHT_BROWSERS_PATH}"
+                sh 'mkdir -p "${PLAYWRIGHT_BROWSERS_PATH}" || true'
+                sh 'ls -la "${PLAYWRIGHT_BROWSERS_PATH}" || echo "Browser cache empty"'
                 
                 // Set up Jenkins-specific environment
                 sh 'chmod +x setup-jenkins-env.sh'
@@ -55,6 +69,12 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo '📦 Installing dependencies...'
+                
+                // Create cache directories
+                sh '''
+                    mkdir -p "${NPM_CONFIG_CACHE}" || true
+                    mkdir -p "${PLAYWRIGHT_BROWSERS_PATH}" || true
+                '''
                 
                 script {
                     // Install system dependencies for Playwright
@@ -89,19 +109,29 @@ pipeline {
                     }
                 }
                 
-                sh 'npm ci || npm install'
+                // Install npm dependencies with caching
+                sh 'npm ci --cache="${NPM_CONFIG_CACHE}" || npm install --cache="${NPM_CONFIG_CACHE}"'
                 
                 script {
-                    // For Jenkins environment, prefer Firefox over Chromium due to snap issues
+                    // Use Chromium browser (no fallback)
                     def browser = params.BROWSER
-                    if (env.JENKINS_URL && browser == 'chromium') {
-                        echo "🔄 Jenkins environment detected, switching to Firefox for better compatibility"
-                        browser = 'firefox'
-                        env.JENKINS_BROWSER = 'firefox'
+                    
+                    // Check if browser is already installed
+                    def browserInstalled = sh(
+                        script: "npx playwright install --dry-run ${browser} | grep 'is already installed' || echo 'not-installed'",
+                        returnStdout: true
+                    ).trim()
+                    
+                    if (browserInstalled.contains('not-installed')) {
+                        echo "🌐 Installing ${browser} browser..."
+                        sh "npx playwright install ${browser}"
+                        sh "npx playwright install-deps ${browser} || echo 'Could not install browser deps'"
+                    } else {
+                        echo "✅ ${browser} browser already installed, skipping download"
                     }
                     
-                    sh "npx playwright install ${browser}"
-                    sh "npx playwright install-deps ${browser} || echo 'Could not install browser deps'"
+                    // Verify browser installation
+                    sh "npx playwright install --dry-run ${browser} && echo '${browser} verification successful'"
                 }
             }
         }
@@ -112,16 +142,16 @@ pipeline {
                     def testCommand = "npx playwright test"
                     def reporterOptions = "--reporter=line,allure-playwright"
                     
-                    // Use Firefox in Jenkins environment for better compatibility
-                    def browser = env.JENKINS_BROWSER ?: params.BROWSER
+                    // Use the selected browser (Chromium)
+                    def browser = params.BROWSER
                     def browserOption = "--project=${browser}"
                     def headedOption = params.HEADED ? "--headed" : ""
                     
                     // Add additional options for better stability in CI
                     def ciOptions = ""
                     if (env.JENKINS_URL) {
-                        ciOptions = "--workers=1 --retries=2"
-                        echo "🏗️ Jenkins environment detected - using single worker and retries for stability"
+                        ciOptions = "--workers=3 --retries=2"
+                        echo "🏗️ Jenkins environment detected - using 3 workers and retries for stability"
                     }
                     
                     switch(params.TEST_SUITE) {
