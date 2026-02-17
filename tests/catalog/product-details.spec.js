@@ -108,7 +108,7 @@ test.describe('Catalog - Product Details', () => {
     console.log('✓ Social sharing options displayed (Facebook, Twitter, Pinterest)');
   });
 
-  test.fixme('product page shows related products', async ({ page }) => {
+  test('product page shows related products', async ({ page }) => {
     const productDetailsPage = new ProductDetailsPage(page);
     
     await page.goto(`${BASE_URL}/products/antique-drawers`, { waitUntil: 'domcontentloaded' });
