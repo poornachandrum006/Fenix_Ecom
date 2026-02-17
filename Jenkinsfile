@@ -285,11 +285,6 @@ pipeline {
             
             // Send test summary
             script {
-                def testFiles = sh(
-                    script: "find allure-results -name '*-result.json' 2>/dev/null | wc -l || echo '0'",
-                    returnStdout: true
-                ).trim()
-                
                 def passedTests = sh(
                     script: "find allure-results -name '*-result.json' 2>/dev/null -exec grep -l '\"status\":\"passed\"' {} \\; | wc -l || echo '0'",
                     returnStdout: true
@@ -300,13 +295,22 @@ pipeline {
                     returnStdout: true
                 ).trim()
                 
+                def skippedTests = sh(
+                    script: "find allure-results -name '*-result.json' 2>/dev/null -exec grep -l '\"status\":\"skipped\"' {} \\; | wc -l || echo '0'",
+                    returnStdout: true
+                ).trim()
+                
+                // Calculate actual total tests
+                def totalTests = (passedTests as Integer) + (failedTests as Integer) + (skippedTests as Integer)
+                
                 echo "📊 Test Summary:"
                 echo "   • Test Suite: ${params.TEST_SUITE}"
                 echo "   • Browser: ${params.BROWSER}"
                 echo "   • Branch: ${params.BRANCH}"
-                echo "   • Total Tests: ${testFiles}"
+                echo "   • Total Tests: ${totalTests}"
                 echo "   • Passed: ${passedTests}"
                 echo "   • Failed: ${failedTests}"
+                echo "   • Skipped: ${skippedTests}"
                 echo "   • 📋 View detailed results in Allure Report"
             }
         }
