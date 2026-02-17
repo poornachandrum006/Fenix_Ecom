@@ -136,6 +136,24 @@ pipeline {
             }
         }
         
+        stage('Clean Previous Results') {
+            steps {
+                echo '🧹 Cleaning previous test results and reports...'
+                script {
+                    // Remove old allure results and reports to ensure only current build results
+                    sh '''
+                        echo "Removing old allure results..."
+                        rm -rf allure-results allure-report || echo "No previous results to clean"
+                        
+                        echo "Creating fresh allure-results directory..."
+                        mkdir -p allure-results
+                        
+                        echo "Cleanup completed - ready for fresh test results"
+                    '''
+                }
+            }
+        }
+        
         stage('Run Catalog Tests') {
             steps {
                 script {

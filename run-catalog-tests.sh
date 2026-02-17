@@ -15,6 +15,10 @@ echo "🌐 Browser: $BROWSER"
 echo "👁️  Headed Mode: $HEADED"
 
 # Setup
+echo "🧹 Cleaning previous test results..."
+rm -rf allure-results allure-report || echo "No previous results to clean"
+mkdir -p allure-results
+
 echo "📦 Installing dependencies..."
 npm install
 
