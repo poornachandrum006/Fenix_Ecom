@@ -35,11 +35,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo "🔄 Checking out branch: ${params.BRANCH}"
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: "*/${params.BRANCH}"]],
-                    userRemoteConfigs: [[url: 'https://github.com/poornachandrum006/Fenix_Ecom.git']]
-                ])
+                git branch: "${params.BRANCH}", url: 'https://github.com/poornachandrum006/Fenix_Ecom.git'
             }
         }
         
