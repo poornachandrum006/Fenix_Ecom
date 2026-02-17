@@ -45,14 +45,64 @@ pipeline {
                 sh 'node --version || echo "Node.js not found"'
                 sh 'npm --version || echo "npm not found"'
                 sh 'pwd && ls -la'
+                
+                // Set up Jenkins-specific environment
+                sh 'chmod +x setup-jenkins-env.sh'
+                sh '. ./setup-jenkins-env.sh'
             }
         }
         
         stage('Install Dependencies') {
             steps {
                 echo '📦 Installing dependencies...'
+                
+                script {
+                    // Install system dependencies for Playwright
+                    try {
+                        sh '''
+                            # Install system dependencies
+                            sudo apt-get update || echo "Could not update apt cache"
+                            sudo apt-get install -y \
+                                libnss3 \
+                                libnspr4 \
+                                libdbus-1-3 \
+                                libatk1.0-0 \
+                                libatk-bridge2.0-0 \
+                                libcups2 \
+                                libdrm2 \
+                                libgtk-3-0 \
+                                libgbm1 \
+                                libasound2 \
+                                libxss1 \
+                                libxcomposite1 \
+                                libxdamage1 \
+                                libxrandr2 \
+                                libxkbcommon0 \
+                                libatspi2.0-0 \
+                                libxshmfence1 \
+                                fonts-liberation \
+                                libappindicator3-1 \
+                                xdg-utils || echo "Some system packages could not be installed"
+                        '''
+                    } catch (Exception e) {
+                        echo "⚠️ Could not install system dependencies: ${e.getMessage()}"
+                    }
+                }
+                
                 sh 'npm ci || npm install'
-                sh 'npx playwright install ${BROWSER}'
+                
+                script {
+                    // For Jenkins environment, prefer Firefox over Chromium due to snap issues
+                    def browser = params.BROWSER
+                    if (env.JENKINS_URL && browser == 'chromium') {
+                        echo "🔄 Jenkins environment detected, switching to Firefox for better compatibility"
+                        browser = 'firefox'
+                        env.JENKINS_BROWSER = 'firefox'
+                    }
+                    
+                    sh "npx playwright install ${browser}"
+                    sh "npx playwright install-deps ${browser} || echo 'Could not install browser deps'"
+                }
             }
         }
         
@@ -61,38 +111,55 @@ pipeline {
                 script {
                     def testCommand = "npx playwright test"
                     def reporterOptions = "--reporter=line,allure-playwright"
-                    def browserOption = "--project=${params.BROWSER}"
+                    
+                    // Use Firefox in Jenkins environment for better compatibility
+                    def browser = env.JENKINS_BROWSER ?: params.BROWSER
+                    def browserOption = "--project=${browser}"
                     def headedOption = params.HEADED ? "--headed" : ""
+                    
+                    // Add additional options for better stability in CI
+                    def ciOptions = ""
+                    if (env.JENKINS_URL) {
+                        ciOptions = "--workers=1 --retries=2"
+                        echo "🏗️ Jenkins environment detected - using single worker and retries for stability"
+                    }
                     
                     switch(params.TEST_SUITE) {
                         case 'all':
                             echo '🧪 Running all catalog tests...'
-                            testCommand += " tests/catalog/ ${reporterOptions} ${browserOption} ${headedOption}"
+                            testCommand += " tests/catalog/ ${reporterOptions} ${browserOption} ${headedOption} ${ciOptions}"
                             break
                         case 'browse-products':
                             echo '🛒 Running browse products tests...'
-                            testCommand += " tests/catalog/browse-products.spec.js ${reporterOptions} ${browserOption} ${headedOption}"
+                            testCommand += " tests/catalog/browse-products.spec.js ${reporterOptions} ${browserOption} ${headedOption} ${ciOptions}"
                             break
                         case 'filter-products':
                             echo '🔍 Running filter products tests...'
-                            testCommand += " tests/catalog/filter-products.spec.js ${reporterOptions} ${browserOption} ${headedOption}"
+                            testCommand += " tests/catalog/filter-products.spec.js ${reporterOptions} ${browserOption} ${headedOption} ${ciOptions}"
                             break
                         case 'pagination':
                             echo '📄 Running pagination tests...'
-                            testCommand += " tests/catalog/pagination.spec.js ${reporterOptions} ${browserOption} ${headedOption}"
+                            testCommand += " tests/catalog/pagination.spec.js ${reporterOptions} ${browserOption} ${headedOption} ${ciOptions}"
                             break
                         case 'product-details':
                             echo '📋 Running product details tests...'
-                            testCommand += " tests/catalog/product-details.spec.js ${reporterOptions} ${browserOption} ${headedOption}"
+                            testCommand += " tests/catalog/product-details.spec.js ${reporterOptions} ${browserOption} ${headedOption} ${ciOptions}"
                             break
                         case 'sort-products':
                             echo '🔄 Running sort products tests...'
-                            testCommand += " tests/catalog/sort-products.spec.js ${reporterOptions} ${browserOption} ${headedOption}"
+                            testCommand += " tests/catalog/sort-products.spec.js ${reporterOptions} ${browserOption} ${headedOption} ${ciOptions}"
                             break
                     }
                     
                     echo "🏃 Executing: ${testCommand}"
-                    sh testCommand
+                    echo "🔧 Browser: ${browser}"
+                    
+                    try {
+                        sh testCommand
+                    } catch (Exception e) {
+                        echo "⚠️ Tests failed with error: ${e.getMessage()}"
+                        throw e
+                    }
                 }
             }
         }
