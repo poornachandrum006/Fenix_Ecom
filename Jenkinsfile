@@ -13,8 +13,8 @@ pipeline {
         )
         choice(
             name: 'BROWSER',
-            choices: ['chromium', 'firefox', 'webkit'],
-            description: 'Browser to run tests on'
+            choices: ['chromium'],
+            description: 'Browser to run tests on (Chromium only)'
         )
         booleanParam(
             name: 'HEADED',

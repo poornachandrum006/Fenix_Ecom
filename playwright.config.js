@@ -41,22 +41,23 @@ module.exports = defineConfig({
         },
       },
     },
-    {
-      name: 'firefox',
-      use: { 
-        ...devices['Desktop Firefox'],
-        // Firefox is generally more stable in CI environments
-        launchOptions: {
-          firefoxUserPrefs: {
-            'media.navigator.streams.fake': true,
-            'media.navigator.permission.disabled': true,
-          },
-        },
-      },
-    },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
+    // Firefox and WebKit projects commented out to run only in Chromium
+    // {
+    //   name: 'firefox',
+    //   use: { 
+    //     ...devices['Desktop Firefox'],
+    //     // Firefox is generally more stable in CI environments
+    //     launchOptions: {
+    //       firefoxUserPrefs: {
+    //         'media.navigator.streams.fake': true,
+    //         'media.navigator.permission.disabled': true,
+    //       },
+    //     },
+    //   },
+    // },
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] },
+    // },
   ],
 });
