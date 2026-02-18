@@ -17,8 +17,8 @@ test.describe('Catalog - Pagination', () => {
     await expect(catalogPage.nextPageLink).toBeVisible();
     
     await expect(catalogPage.previousPageText).toBeVisible();
-    const prevParentButton = catalogPage.previousPageText.locator('xpath=ancestor-or-self::button[1]');
-    expect(await prevParentButton.isDisabled()).toBe(true);
+    const prevButton = catalogPage.previousPageButton;
+    expect(await prevButton.isDisabled()).toBe(true);
     
     console.log('✓ Pagination controls verified on page 1');
   });
@@ -55,7 +55,8 @@ test.describe('Catalog - Pagination', () => {
     await catalogPage.goToNextPage();
     await expect(catalogPage.getPageIndicator(2)).toBeVisible();
     
-    await expect(catalogPage.previousPageText).toBeVisible();
+    await expect(catalogPage.previousPageButton).toBeVisible();
+    expect(await catalogPage.previousPageButton.isDisabled()).toBe(false);
     
     console.log('✓ Previous page button enabled on page 2');
   });
@@ -93,7 +94,8 @@ test.describe('Catalog - Pagination', () => {
     
     await expect(catalogPage.getPageIndicator(5)).toBeVisible();
     
-    await expect(catalogPage.previousPageText).toBeVisible();
+    await expect(catalogPage.previousPageButton).toBeVisible();
+    expect(await catalogPage.previousPageButton.isDisabled()).toBe(false);
     
     console.log('✓ Pagination correctly shows page 5 of 5');
   });

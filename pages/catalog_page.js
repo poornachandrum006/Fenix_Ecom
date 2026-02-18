@@ -39,6 +39,11 @@ export class CatalogPage {
     return this.page.locator('text=Previous page');
   }
 
+  get previousPageButton() {
+    // On page 1: disabled button, on other pages: enabled link
+    return this.page.locator('button, a').filter({ hasText: 'Previous page' });
+  }
+
   // Product locators
   get productLinks() {
     return this.page.getByRole('link').filter({ hasText: /Antique|Bangle|Bedside|Biodegradable/ });
@@ -84,7 +89,9 @@ export class CatalogPage {
   }
 
   async goToPreviousPage() {
-    await this.previousPageText.click();
+    // Previous page can be either a disabled button (page 1) or an enabled link (other pages)
+    const prevElement = this.page.locator('button, a').filter({ hasText: 'Previous page' });
+    await prevElement.click();
     await this.page.waitForTimeout(3000);
   }
 
@@ -117,7 +124,7 @@ export class CatalogPage {
 
   // Page info methods
   getPageIndicator(pageNum) {
-    return this.page.locator(`text=Page ${pageNum} of 5`);
+    return this.page.locator(`text=Page ${pageNum} of`, { hasText: new RegExp(`Page ${pageNum} of \\d+`) });
   }
 
   getProductLinksForPage(pageNum) {

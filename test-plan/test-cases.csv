@@ -1,0 +1,263 @@
+Test Category,Test Name,Steps,Expected Result
+Catalog - Browse Products,View all products catalog page,"1. Go to homepage
+2. Navigate to catalog","1. Page title contains 'Products'
+2. Page title is visible
+3. Product count text is visible
+4. 75 products displayed"
+Catalog - Browse Products,Verify product list displays correctly,"1. Go to homepage
+2. Navigate to catalog
+3. Check product list count","1. Product list displayed
+2. Count is greater than 0"
+Catalog - Browse Products,Verify product card elements,"1. Go to homepage
+2. Navigate to catalog
+3. Check first product card (Antique Drawers)
+4. Verify pricing elements","1. Product link visible
+2. Sale price elements count > 0
+3. Regular price elements count > 0
+4. Both pricing types displayed"
+Catalog - Browse Products,View product details from catalog,"1. Go to homepage
+2. Navigate to catalog
+3. Click on 'Antique Drawers' product","1. URL contains '/products/antique-drawers'
+2. Product heading 'Antique Drawers' visible
+3. 'Add to cart' button visible"
+Catalog - Browse Products,Verify sale badge displays on products,"1. Go to homepage
+2. Navigate to catalog
+3. Count sale badges","1. Sale badges count > 0
+2. Sale badges visible on products"
+Catalog - Browse Products,Verify pricing display on products,"1. Go to homepage
+2. Navigate to catalog
+3. Check sale price elements
+4. Check regular price elements","1. Sale price elements count > 0
+2. Regular price elements count > 0
+3. Both types displayed"
+Catalog - Browse Products,Browse different product categories,"1. Go to homepage
+2. Navigate to catalog
+3. Verify multiple products visible: Antique Drawers, Bangle Bracelet, Bedside Table, Black Beanbag","1. All specified products are visible
+2. Multiple product categories displayed"
+Catalog - Sort Products,Sort dropdown is available,"1. Go to homepage
+2. Navigate to catalog
+3. Check sort dropdown visibility","1. Sort dropdown is visible"
+Catalog - Sort Products,Sort dropdown contains all sort options,"1. Go to homepage
+2. Navigate to catalog
+3. Get all sort options
+4. Verify each option exists","1. Contains 'Featured'
+2. Contains 'Best selling'
+3. Contains 'Alphabetically, A-Z'
+4. Contains 'Alphabetically, Z-A'
+5. Contains 'Price, low to high'
+6. Contains 'Price, high to low'
+7. Contains 'Date, old to new'
+8. Contains 'Date, new to old'"
+Catalog - Sort Products,Sort by best selling,"1. Go to homepage
+2. Navigate to catalog
+3. Select 'Best selling' from sort dropdown
+4. Check product links count","1. Products sorted by Best selling
+2. Product links count > 0"
+Catalog - Sort Products,Sort by price low to high,"1. Go to homepage
+2. Navigate to catalog
+3. Select 'Price, low to high' from sort dropdown
+4. Check product links count","1. Products sorted by Price, low to high
+2. Product links count > 0"
+Catalog - Sort Products,Sort by price high to low,"1. Go to homepage
+2. Navigate to catalog
+3. Select 'Price, high to low' from sort dropdown
+4. Check product links count","1. Products sorted by Price, high to low
+2. Product links count > 0"
+Catalog - Sort Products,Sort alphabetically A-Z,"1. Go to homepage
+2. Navigate to catalog
+3. Select 'Alphabetically, A-Z' from sort dropdown
+4. Check product links count","1. Products sorted Alphabetically, A-Z
+2. Product links count > 0"
+Catalog - Sort Products,Sort alphabetically Z-A,"1. Go to homepage
+2. Navigate to catalog
+3. Select 'Alphabetically, Z-A' from sort dropdown
+4. Check product links count","1. Products sorted Alphabetically, Z-A
+2. Product links count > 0"
+Catalog - Sort Products,Sort by date newest first,"1. Go to homepage
+2. Navigate to catalog
+3. Select 'Date, new to old' from sort dropdown
+4. Check product links count","1. Products sorted by Date, new to old
+2. Product links count > 0"
+Catalog - Sort Products,Sort by date oldest first,"1. Go to homepage
+2. Navigate to catalog
+3. Select 'Date, old to new' from sort dropdown
+4. Check product links count","1. Products sorted by Date, old to new
+2. Product links count > 0"
+Catalog - Sort Products,Sort by featured (default),"1. Go to homepage
+2. Navigate to catalog
+3. Select 'Featured' from sort dropdown
+4. Check product links count","1. Products sorted by Featured
+2. Product links count > 0"
+Catalog - Filter Products,Filter dropdown is available,"1. Go to homepage
+2. Navigate to catalog
+3. Check filter dropdown visibility","1. Filter dropdown is visible"
+Catalog - Filter Products,Filter dropdown contains categories,"1. Go to homepage
+2. Navigate to catalog
+3. Get filter dropdown options
+4. Count options","1. Option count > 0
+2. Filter dropdown has category options"
+Catalog - Filter Products,Filter by Antique category,"1. Go to homepage
+2. Navigate to catalog
+3. Select 'Antique' from filter dropdown
+4. Check antique products count","1. Successfully filtered by Antique category
+2. Antique products count > 0"
+Catalog - Filter Products,Filter by color category,"1. Go to homepage
+2. Navigate to catalog
+3. Select 'Blue' from filter dropdown
+4. Check URL contains filter
+5. Get product count","1. URL contains 'Blue' or 'filter'
+2. Product count >= 0
+3. Successfully filtered by Blue color"
+Catalog - Filter Products,Verify filter categories exist,"1. Go to homepage
+2. Navigate to catalog
+3. Get all filter options
+4. Verify specific categories","1. Contains 'All products'
+2. Contains option with 'Antique'
+3. Contains option with 'Blue' or 'Black'"
+Catalog - Filter Products,Clear filter returns to all products,"1. Go to homepage
+2. Navigate to catalog
+3. Select 'Antique' from filter
+4. Clear filter
+5. Check product count text","1. Filter cleared
+2. Product count text visible
+3. All products visible"
+Catalog - Pagination,Verify pagination controls exist,"1. Go to homepage
+2. Navigate to catalog
+3. Check page 1 indicator
+4. Check next page link
+5. Check previous page button disabled","1. Page 1 indicator visible
+2. Next page link visible
+3. Previous page text visible
+4. Previous page button is disabled on page 1"
+Catalog - Pagination,Navigate to next page,"1. Go to homepage
+2. Navigate to catalog
+3. Click next page button
+4. Verify URL
+5. Check page 2 indicator
+6. Get product links count","1. URL contains 'page=2'
+2. Page 2 indicator visible
+3. Product links count > 0"
+Catalog - Pagination,Navigate through multiple pages,"1. Go to homepage
+2. Navigate to catalog
+3. Click next page (to page 2)
+4. Verify page 2 indicator
+5. Click next page again (to page 3)
+6. Verify page 3 indicator","1. Page 2 indicator visible
+2. Page 3 indicator visible
+3. Successfully navigated through multiple pages"
+Catalog - Pagination,Previous page button is enabled on page 2,"1. Go to homepage
+2. Navigate to catalog
+3. Click next page to page 2
+4. Verify page 2 indicator
+5. Check previous page button visibility","1. Page 2 indicator visible
+2. Previous page button visible
+3. Previous page button enabled"
+Catalog - Pagination,Go back to previous page,"1. Go to homepage
+2. Navigate to catalog
+3. Click next page to page 2
+4. Click previous page button
+5. Verify URL
+6. Check page 1 indicator","1. URL contains 'collections/all' with page=1 or no page param
+2. Page 1 indicator visible
+3. Successfully navigated back to page 1"
+Catalog - Pagination,Verify each page has products,"1. Go to homepage
+2. Navigate to catalog
+3. Get product links for page 1
+4. Count products","1. Product count > 0
+2. Page 1 has products"
+Catalog - Pagination,Pagination shows correct page info,"1. Go to homepage
+2. Navigate to catalog
+3. Check page 1 indicator
+4. Click next page 4 times to reach page 5
+5. Verify page 5 indicator
+6. Check previous page button visible","1. Page 1 indicator visible initially
+2. Page 5 indicator visible
+3. Previous page button visible
+4. Pagination correctly shows page 5 of 5"
+Catalog - Product Details,View product details page,"1. Go to homepage
+2. Navigate to catalog
+3. Click 'Antique Drawers' product
+4. Verify URL
+5. Check product heading","1. URL contains '/products/antique-drawers'
+2. Product heading 'Antique Drawers' visible"
+Catalog - Product Details,Product page shows product image,"1. Go to product page: /products/antique-drawers
+2. Check product image visibility","1. Product image for 'Antique Drawers' is visible"
+Catalog - Product Details,Product page shows pricing,"1. Go to product page: /products/antique-drawers
+2. Check sale price element
+3. Check regular price element
+4. Get actual prices","1. Sale price element visible
+2. Regular price element visible
+3. Both prices displayed"
+Catalog - Product Details,Product page shows sale badge,"1. Go to product page: /products/antique-drawers
+2. Check sale badge visibility","1. Sale badge is visible"
+Catalog - Product Details,Product page shows product description,"1. Go to product page: /products/antique-drawers
+2. Check product description visibility","1. Product description is visible"
+Catalog - Product Details,Product page shows size options,"1. Go to product page: /products/antique-drawers
+2. Check size selector visibility
+3. Get size options count","1. Size selector is visible
+2. Size options count > 0"
+Catalog - Product Details,Product page shows add to cart button,"1. Go to product page: /products/antique-drawers
+2. Check add to cart button visibility
+3. Check button enabled state","1. Add to cart button is visible
+2. Add to cart button is enabled"
+Catalog - Product Details,Product page shows buy now button,"1. Go to product page: /products/antique-drawers
+2. Check buy now button visibility
+3. Check button enabled state","1. Buy now button is visible
+2. Buy now button is enabled"
+Catalog - Product Details,Product page shows social sharing options,"1. Go to product page: /products/antique-drawers
+2. Check Facebook share link
+3. Check Twitter share link
+4. Check Pinterest share link","1. Facebook share link visible
+2. Twitter share link visible
+3. Pinterest share link visible"
+Catalog - Product Details,Product page shows related products,"1. Go to product page: /products/antique-drawers
+2. Check related products heading
+3. Count related products list","1. Related products heading visible
+2. Related products list count > 0"
+Catalog - Product Details,Select different product size variant,"1. Go to product page: /products/antique-drawers
+2. Select 'LARGE' size
+3. Get selected size","1. Size changed to LARGE
+2. Selected option contains 'LARGE'"
+Catalog - Product Details,Navigate back to catalog from product page,"1. Go to product page: /products/antique-drawers
+2. Click back to catalog link
+3. Verify URL
+4. Check product count text","1. URL contains 'collections/all'
+2. Product count text visible
+3. Navigated back to catalog"
+Catalog - Product Details,View another product from catalog,"1. Go to homepage
+2. Navigate to catalog
+3. Click 'Bangle Bracelet' product
+4. Verify URL
+5. Check product heading","1. URL contains '/products/bangle-bracelet'
+2. Product heading 'Bangle Bracelet' visible"
+Functional - Search and Buy,Search for product and buy now,"1. Navigate to homepage
+2. Verify page title contains 'WearHumans'
+3. Click search button
+4. Type 'antique' in search field
+5. Press Enter
+6. Click on 'Antique Drawers' link (first result)
+7. Click 'Buy it now' button","1. Homepage title contains 'WearHumans'
+2. Search results displayed
+3. URL contains '/products/antique-drawers'
+4. URL contains '/checkouts'
+5. Contact heading visible
+6. Complete flow: Search → First Result → Buy Now → Checkout"
+Functional - E2E,Complete e2e flow - homepage to checkout,"1. Navigate to homepage
+2. Verify page title contains 'WearHumans'
+3. Click 'Catalog' link
+4. Click 'Antique Drawers' product (first item)
+5. Click 'Add to cart' button
+6. Verify 'Just added to your cart' dialog
+7. Click 'View cart' link
+8. Verify cart contains 'Antique Drawers'
+9. Click 'Check out' button","1. Homepage title contains 'WearHumans'
+2. URL contains '/collections/all'
+3. URL contains '/products/antique-drawers'
+4. 'Just added to your cart' dialog visible
+5. URL contains '/cart'
+6. 'Antique Drawers' text visible in cart
+7. URL contains '/checkouts'
+8. Contact heading visible
+9. Delivery heading visible
+10. Payment heading visible
+11. Complete E2E flow: Homepage → Catalog → Product → Cart → Checkout"
