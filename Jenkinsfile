@@ -8,7 +8,7 @@ pipeline {
     parameters {
         choice(
             name: 'TEST_SUITE',
-            choices: ['all', 'browse-products', 'filter-products', 'pagination', 'product-details', 'sort-products'],
+            choices: ['all', 'catalog', 'functional', 'visual', 'browse-products', 'filter-products', 'pagination', 'product-details', 'sort-products', 'e2e', 'search-and-buy'],
             description: 'Which test suite to run'
         )
         choice(
@@ -155,7 +155,7 @@ pipeline {
             }
         }
         
-        stage('Run Catalog Tests') {
+        stage('Run Tests') {
             steps {
                 script {
                     def testCommand = "npx playwright test"
@@ -175,8 +175,20 @@ pipeline {
                     
                     switch(params.TEST_SUITE) {
                         case 'all':
-                            echo '🧪 Running all catalog tests...'
+                            echo '🧪 Running all tests (catalog, functional, visual, and seed tests)...'
+                            testCommand += " tests/ ${reporterOptions} ${browserOption} ${headedOption} ${ciOptions}"
+                            break
+                        case 'catalog':
+                            echo '🛍️ Running all catalog tests...'
                             testCommand += " tests/catalog/ ${reporterOptions} ${browserOption} ${headedOption} ${ciOptions}"
+                            break
+                        case 'functional':
+                            echo '🔧 Running all functional tests...'
+                            testCommand += " tests/Functional/ ${reporterOptions} ${browserOption} ${headedOption} ${ciOptions}"
+                            break
+                        case 'visual':
+                            echo '👁️ Running visual/snapshot tests...'
+                            testCommand += " tests/visual/ ${reporterOptions} ${browserOption} ${headedOption} ${ciOptions}"
                             break
                         case 'browse-products':
                             echo '🛒 Running browse products tests...'
@@ -197,6 +209,14 @@ pipeline {
                         case 'sort-products':
                             echo '🔄 Running sort products tests...'
                             testCommand += " tests/catalog/sort-products.spec.js ${reporterOptions} ${browserOption} ${headedOption} ${ciOptions}"
+                            break
+                        case 'e2e':
+                            echo '🌐 Running E2E tests...'
+                            testCommand += " tests/Functional/E2E.spec.js ${reporterOptions} ${browserOption} ${headedOption} ${ciOptions}"
+                            break
+                        case 'search-and-buy':
+                            echo '🔍🛒 Running search and buy tests...'
+                            testCommand += " tests/Functional/search-and-buy.spec.js ${reporterOptions} ${browserOption} ${headedOption} ${ciOptions}"
                             break
                     }
                     
@@ -317,11 +337,23 @@ pipeline {
         
         success {
             echo "🎉 ${params.TEST_SUITE} tests PASSED on ${params.BROWSER}!"
+            script {
+                if (params.TEST_SUITE == 'all') {
+                    echo "✅ All test suites (catalog, functional, visual) completed successfully!"
+                } else {
+                    echo "✅ ${params.TEST_SUITE} test suite completed successfully!"
+                }
+            }
         }
         
         failure {
             echo "❌ ${params.TEST_SUITE} tests FAILED on ${params.BROWSER}!"
             echo "📋 Check the Allure report for detailed results."
+            script {
+                if (params.TEST_SUITE == 'all') {
+                    echo "⚠️ One or more test suites (catalog/functional/visual) failed. Review logs for details."
+                }
+            }
         }
         
         unstable {
