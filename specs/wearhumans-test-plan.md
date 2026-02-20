@@ -1,161 +1,208 @@
-# WearHumans E-commerce User Journey Test Plan
+# WearHumans — Comprehensive Test Plan (Merged)
 
-## Application Overview
+## Overview
 
-WearHumans.com is an e-commerce website that sells various products including face masks, furniture, accessories, and clothing items. The site features a modern Shopify-based interface with full shopping cart functionality, express checkout options, and secure payment processing. The test plan covers the complete user journey from product discovery through checkout.
+This single, consolidated test plan merges the existing test documents (homepage, PLP/PDP, and end‑to‑end user journey) into one authoritative source of test scenarios for WearHumans (Shopify).
 
-## Test Scenarios
+- Base URL: `https://wearhumans.com`
+- Canonical seed file: `tests/seed.spec.js` (used to set up base URL)
+- Purpose: consolidate homepage, PLP, PDP and E2E scenarios; remove duplicates; provide file mappings for automation.
 
-### 1. E-commerce User Journey
+---
 
-**Seed:** `tests/seed-wearhumans.spec.ts`
+## Table of contents
+1. Homepage
+2. Product Listing Page (PLP)
+3. Product Detail Page (PDP)
+4. Catalog & Search
+5. Cart & Checkout (E2E flows)
+6. Cross‑cutting: Accessibility, Performance, Error handling, Responsive
+7. Test data / Seeds
+8. Execution notes & file mapping
 
-#### 1.1. Complete Purchase Flow - Happy Path
+---
 
-**File:** `tests/e-commerce/complete-purchase-flow.spec.ts`
+## 1. Homepage
 
-**Steps:**
-  1. Navigate to wearhumans.com homepage
-    - expect: Page loads successfully
-    - expect: Homepage displays with navigation menu
-    - expect: Cart shows 0 items initially
-    - expect: Catalog link is visible in navigation
-  2. Click on 'Catalog' in the main navigation
-    - expect: Redirected to /collections/all page
-    - expect: Product grid displays with multiple products
-    - expect: Filter and sort options are available
-    - expect: Products show with images, names, and prices
-  3. Click on the first product (Antique Drawers)
-    - expect: Product detail page loads
-    - expect: Product image, name, price, and description are displayed
-    - expect: Size selector shows available options (Medium/Large)
-    - expect: Add to cart button is visible and enabled
-  4. Select product size (keep default Medium) and click 'Add to cart'
-    - expect: Product is added to cart
-    - expect: Modal popup appears saying 'Just added to your cart'
-    - expect: Cart counter in header updates to show 1 item
-    - expect: View cart link is available in the modal
-  5. Click 'View cart' from the modal
-    - expect: Cart page loads at /cart
-    - expect: Product is listed in cart table with correct details
-    - expect: Quantity shows as 1
-    - expect: Price shows $250.00
-    - expect: Subtotal displays correctly
-    - expect: Check out button is visible
-  6. Click 'Check out' button
-    - expect: Checkout page loads with secure URL
-    - expect: Contact section prompts for email/phone
-    - expect: Delivery options show Ship/Pick up
-    - expect: Shipping address form is displayed
-    - expect: Payment section with credit card fields
-    - expect: Order summary shows correct item and total ($272.50 including taxes)
+**Seed:** `tests/seed.spec.js`
 
-#### 1.2. Product Catalog Navigation and Filtering
+### 1.1 Branding, navigation and hero
+- Verify page title and branding: 'WearHumans - Spread Happiness with Humanly Face masks'
+- Header contains links: Home, Catalog; icons: Search, Log in, Cart
+- Hero slideshow displays expected headings and primary CTA (BUY NOW)
+- Footer contains Quick links, Newsletter, Payment methods and 'Powered by Shopify'
 
-**File:** `tests/e-commerce/catalog-navigation.spec.ts`
+Suggested spec files:
+- `tests/homepage/layout-navigation.spec.ts`
+- `tests/homepage/responsive-accessibility.spec.ts`
 
-**Steps:**
-  1. Navigate to catalog page
-    - expect: Catalog page loads with product grid
-    - expect: Filter dropdown shows various categories
-    - expect: Sort dropdown has multiple sorting options
-    - expect: Pagination shows 'Page 1 of 5' indicating multiple pages
-  2. Test filter functionality by selecting a product tag
-    - expect: Products filter based on selected criteria
-    - expect: Product count updates to reflect filtered results
-    - expect: Clear filter option is available
-  3. Test sorting functionality by changing sort order
-    - expect: Products reorder based on selected sort criteria
-    - expect: Sort options include price (low to high, high to low), alphabetical, date, featured
-  4. Navigate to next page using pagination
-    - expect: Page 2 loads with different products
-    - expect: URL updates to include page parameter
-    - expect: Previous page button becomes enabled
+### 1.2 Search modal and search results
+- Search modal opens/closes, input focused, Escape closes modal
+- Search accepts valid queries, handles special characters, and shows results or 'no results' message
+- Edge cases: empty search, very long query (500+ chars), input validation
 
-#### 1.3. Cart Management Operations
+Suggested spec files:
+- `tests/homepage/search-modal.spec.ts`
+- `tests/homepage/search-valid-queries.spec.ts`
 
-**File:** `tests/e-commerce/cart-management.spec.ts`
+### 1.3 Newsletter subscription
+- Valid/invalid email validation, CAPTCHA handling (hCaptcha), accessibility of CAPTCHA
+- Form prevents invalid submissions and shows appropriate messages
 
-**Steps:**
-  1. Add multiple products to cart from different pages
-    - expect: Each product is successfully added
-    - expect: Cart counter updates correctly
-    - expect: Products maintain their selected options (size, variant)
-  2. Access cart and modify quantities
-    - expect: Quantity can be updated using spinbutton
-    - expect: Prices recalculate automatically
-    - expect: Subtotal updates to reflect changes
-  3. Remove items from cart using Remove link
-    - expect: Item is removed from cart
-    - expect: Cart updates to show remaining items
-    - expect: Empty cart state displays if all items removed
-  4. Test additional cart features (shipping protection, carbon neutral options)
-    - expect: Optional add-ons are available
-    - expect: Prices update when optional services selected
-    - expect: Service descriptions are clear and informative
+Suggested spec files:
+- `tests/homepage/newsletter-subscription.spec.ts`
 
-#### 1.4. Checkout Process Validation
+### 1.4 Product grid on homepage
+- Product card elements (image, title, price), hover interactions, placeholder links validation
+- Responsive behavior across desktop/tablet/mobile
 
-**File:** `tests/e-commerce/checkout-validation.spec.ts`
+Suggested spec files:
+- `tests/homepage/product-grid.spec.ts`
 
-**Steps:**
-  1. Proceed to checkout with items in cart
-    - expect: Checkout page loads with all required sections
-    - expect: Express checkout options available (payment gateways)
-    - expect: Guest checkout and sign-in options present
-  2. Test form validation by submitting empty required fields
-    - expect: Appropriate error messages appear
-    - expect: Required fields are clearly marked
-    - expect: Form prevents submission until required data provided
-  3. Fill out contact information with valid email
-    - expect: Email validation works correctly
-    - expect: Newsletter signup option available
-    - expect: Sign-in link functions for existing customers
-  4. Complete shipping address form
-    - expect: Address autocomplete functionality works
-    - expect: Country/state dropdowns populate correctly
-    - expect: Zip code validation functions
-    - expect: Save information checkbox available
-  5. Select shipping method
-    - expect: Shipping options display after address entry
-    - expect: Shipping costs calculate and display
-    - expect: Delivery timeframes shown
-  6. Review payment form security features
-    - expect: Credit card fields are in secure iframes
-    - expect: Card type detection works
-    - expect: Security code tooltip available
-    - expect: SSL encryption indicators present
+---
 
-#### 1.5. Cross-browser and Responsive Design
+## 2. Product Listing Page (PLP)
 
-**File:** `tests/e-commerce/responsive-design.spec.ts`
+**Seed:** `tests/seed.spec.js`
 
-**Steps:**
-  1. Test site functionality on mobile viewport
-    - expect: Navigation collapses to mobile menu
-    - expect: Product grid adapts to smaller screen
-    - expect: Touch interactions work correctly
-    - expect: Checkout form remains usable on mobile
-  2. Verify functionality across different browsers
-    - expect: Site works consistently in Chrome, Firefox, Safari
-    - expect: Payment processing functions in all browsers
-    - expect: CSS layouts render correctly
-    - expect: JavaScript features function properly
+### 2.1 PLP — Basic load & metadata
+- Navigate to `/collections/all`; title should be 'Products – WearHumans'
+- Product count text is visible and consistent with tiles
 
-#### 1.6. Performance and Error Handling
+Suggested spec file: `tests/catalog/plp-load.spec.js`
 
-**File:** `tests/e-commerce/performance-errors.spec.ts`
+### 2.2 PLP — Product card validation
+- Each card: image, title, price, sale badge (when applicable), product link
+- Tiles link to PDPs and show correct pricing format
 
-**Steps:**
-  1. Monitor page load times and performance
-    - expect: Pages load within acceptable timeframes
-    - expect: Images optimize and load progressively
-    - expect: No console errors affect functionality
-  2. Test error scenarios (network issues, invalid inputs)
-    - expect: Graceful error handling with user-friendly messages
-    - expect: Session persistence during temporary network issues
-    - expect: Recovery mechanisms available
-  3. Verify security features
-    - expect: HTTPS enforced throughout checkout
-    - expect: Payment data secured in iframes
-    - expect: No sensitive data exposed in client-side code
+Suggested spec file: `tests/catalog/plp-product-card.spec.js`
+
+### 2.3 PLP — Filtering & Sort
+- Filter by category (Antique), attribute (Color: Blue), clear filters
+- Sort dropdown contains all expected options and ordering works (price asc/desc, alphabetical, date)
+
+Suggested spec files:
+- `tests/catalog/plp-filter-category.spec.js`
+- `tests/catalog/plp-filter-color.spec.js`
+- `tests/catalog/plp-sort-options.spec.js`
+- `tests/catalog/plp-sort-price-asc.spec.js`
+
+### 2.4 PLP — Pagination, empty state & accessibility
+- Pagination next/previous, page indicators and URL params
+- Empty state when filters produce 0 results
+- Semantic roles, keyboard accessibility for filter/sort controls
+
+Suggested spec files:
+- `tests/catalog/plp-pagination.spec.js`
+- `tests/catalog/plp-empty-state.spec.js`
+- `tests/catalog/plp-accessibility.spec.js`
+
+---
+
+## 3. Product Detail Page (PDP)
+
+**Seed:** `tests/seed.spec.js`
+
+### 3.1 PDP — Basic display
+- PDP URL contains `/products/` and shows title, gallery, price(s), description and 'Add to cart' / 'Buy it now'
+
+Suggested spec file: `tests/catalog/pdp-load.spec.js`
+
+### 3.2 PDP — Pricing, variants & availability
+- Sale/regular price display, variant (size/color) selection, out‑of‑stock handling, quantity validation
+
+Suggested spec files:
+- `tests/catalog/pdp-pricing.spec.js`
+- `tests/catalog/pdp-variants.spec.js`
+- `tests/catalog/pdp-out-of-stock.spec.js`
+- `tests/catalog/pdp-quantity.spec.js`
+
+### 3.3 PDP — Actions and related content
+- Add to cart confirmation, cart count update, 'Buy it now' -> checkout, related products section
+- Social share buttons (Facebook/Twitter/Pinterest) open correct targets
+- Image gallery thumbnails and zoom/lightbox behavior
+
+Suggested spec files:
+- `tests/catalog/pdp-add-to-cart.spec.js`
+- `tests/catalog/pdp-buy-now.spec.js`
+- `tests/catalog/pdp-related.spec.js`
+- `tests/catalog/pdp-share.spec.js`
+- `tests/catalog/pdp-gallery.spec.js`
+
+---
+
+## 4. Catalog & Search (cross-page)
+- Verify combined behaviors: sorts, filters, pagination, search integration and persistence when navigating between PLP/PDP
+- Ensure URLs reflect state (query params for filters, page, search)
+
+Suggested spec files:
+- `tests/e-commerce/catalog-navigation.spec.ts`
+- `tests/homepage/search-valid-queries.spec.ts`
+
+---
+
+## 5. Cart & Checkout (E2E flows)
+
+### 5.1 Complete purchase flow (happy path)
+- Add product(s) to cart, verify cart contents, proceed to checkout, validate contact/shipping/payment sections and order summary
+
+Suggested spec file:
+- `tests/e-commerce/complete-purchase-flow.spec.ts`
+
+### 5.2 Cart management and optional add-ons
+- Modify quantities, remove items, verify optional services (shipping protection / carbon neutral)
+
+Suggested spec file:
+- `tests/e-commerce/cart-management.spec.ts`
+
+### 5.3 Checkout form validation & security
+- Required fields validation, address autocomplete, payment iframe security, express checkout options
+
+Suggested spec file:
+- `tests/e-commerce/checkout-validation.spec.ts`
+
+---
+
+## 6. Cross‑cutting concerns
+
+### Accessibility
+- Heading hierarchy, ARIA roles, keyboard navigation and focus order, alt text for images
+
+### Performance
+- Page load timings, progressive image loading, acceptable thresholds (example: < 3s full load)
+
+### Error handling
+- Network failures, third‑party script failures, graceful degradation without JS, console error monitoring
+
+Suggested spec files:
+- `tests/homepage/responsive-accessibility.spec.ts`
+- `tests/homepage/performance.spec.ts`
+- `tests/homepage/error-handling.spec.ts`
+
+---
+
+## 7. Test data & Seeds
+- Canonical seed: `tests/seed.spec.js` — sets base URL and basic readiness checks
+- Use deterministic test data when possible (stable product slugs, test SKUs, known in-stock variants)
+
+---
+
+## 8. Execution notes & mapping
+- Run all tests: `npm test` (uses Playwright test runner)
+- Run catalog tests only: `npm run test:catalog`
+- Generate Allure report: `npm run report:allure`
+
+File mapping (high level):
+- Homepage: `tests/homepage/*`
+- PLP / PDP: `tests/catalog/*`
+- E2E / Checkout: `tests/e-commerce/*`
+
+---
+
+## Change log
+- Merged `specs/wearhumans-homepage-test-plan.md`, `specs/plp-pdp-test-cases.md`, and previous `wearhumans-test-plan.md` into this consolidated document.
+- Removed duplicates and normalized seed reference to `tests/seed.spec.js`.
+
+---
+
+*File saved: `specs/wearhumans-test-plan.md` — the single source of truth for test scenarios.*
