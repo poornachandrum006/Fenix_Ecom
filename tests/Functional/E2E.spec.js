@@ -39,7 +39,7 @@ test.describe('WearHumans E2E Flow', () => {
     // Verify checkout page loaded with all sections
     await expect(page.getByRole('heading', { name: 'Contact' })).toBeVisible({ timeout: 10000 });
     await expect(page.getByRole('heading', { name: 'Delivery' })).toBeVisible({ timeout: 10000 });
-    await expect(page.getBycRole('heading', { name: 'Payment' })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('heading', { name: 'Payment' })).toBeVisible({ timeout: 10000 });
     
     console.log('✓ E2E flow completed: Homepage → Catalog → Product → Cart → Checkout');
   });
