@@ -61,9 +61,9 @@ pipeline {
                 sh 'mkdir -p "${PLAYWRIGHT_BROWSERS_PATH}" || true'
                 sh 'ls -la "${PLAYWRIGHT_BROWSERS_PATH}" || echo "Browser cache empty"'
                 
-                // Set up Jenkins-specific environment
-                sh 'chmod +x setup-jenkins-env.sh'
-                sh '. ./setup-jenkins-env.sh'
+                // Set up Jenkins-specific environment (script now lives under scripts/)
+                sh 'chmod +x scripts/setup-jenkins-env.sh || true'
+                sh '. ./scripts/setup-jenkins-env.sh || echo "no setup script, skipping"'
             }
         }
         
@@ -209,6 +209,10 @@ pipeline {
                         case 'sort-products':
                             echo '🔄 Running sort products tests...'
                             testCommand += " tests/catalog/sort-products.spec.js ${reporterOptions} ${browserOption} ${headedOption} ${ciOptions}"
+                            break
+                        case 'functional':
+                            echo '🧩 Running functional suite...'
+                            testCommand += " tests/Functional/ ${reporterOptions} ${browserOption} ${headedOption} ${ciOptions}"
                             break
                         case 'e2e':
                             echo '🌐 Running E2E tests...'
