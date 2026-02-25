@@ -23,13 +23,12 @@
    Repository URL: https://github.com/poornachandrum006/Fenix_Ecom.git
    Branch: */main
    Script Path: Jenkinsfile
-   ```
-
+   ```   > Note: helper scripts (e.g. `setup-jenkins-env.sh`) now reside under `scripts/` in the repo.
 4. **Add Parameters** (Build with Parameters):
    - Enable "This project is parameterized"
    - Add Choice Parameter:
      - Name: `TEST_SUITE`
-     - Choices: `all`, `browse-products`, `filter-products`, `pagination`, `product-details`, `sort-products`
+     - Choices: `all`, `catalog`, `functional`, `visual`, `browse-products`, `filter-products`, `pagination`, `product-details`, `sort-products`, `e2e`, `search-and-buy`
    - Add Choice Parameter:
      - Name: `BROWSER`
      - Choices: `chromium`, `firefox`, `webkit`
