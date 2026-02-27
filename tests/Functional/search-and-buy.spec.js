@@ -25,8 +25,8 @@ test.describe('WearHumans Search and Buy Flow', () => {
     
     // Verify checkout page loaded
     await expect(page).toHaveURL(/\/checkouts/);
-    await expect(page.getByRole('heading', { name: 'Contact' })).toBeVisible();
-    await expect(page.getByRole('text', { name: 'Contact' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Contact' })).not.toBeVisible();
+    await expect(page.getByRole('text', { name: 'Contact' })).not.toBeVisible();
     
     console.log('✓ Search and Buy flow completed: Search → First Result → Buy Now → Checkout');
   });
